@@ -7,11 +7,9 @@ intel_app="$(./scripts/build-app --triple x86_64-apple-macosx14.0)"
 
 stage="$(mktemp -d "$PWD/.build/restbell-dmg.XXXXXX")"
 trap 'rm -rf "$stage"' EXIT
-contents="$stage/contents"
-app="$contents/RestBell.app"
+app="$stage/RestBell.app"
 dmg="$PWD/.build/RestBell.dmg"
 
-mkdir "$contents"
 ditto "$arm_app" "$app"
 lipo -create "$arm_app/Contents/MacOS/RestBell" "$intel_app/Contents/MacOS/RestBell" \
     -output "$stage/RestBell"
@@ -19,9 +17,19 @@ install -m 755 "$stage/RestBell" "$app/Contents/MacOS/RestBell"
 codesign --force --sign - "$app" >&2
 codesign --verify --strict --all-architectures "$app"
 lipo "$app/Contents/MacOS/RestBell" -verify_arch arm64 x86_64
-ln -s /Applications "$contents/Applications"
 
-hdiutil create -volname RestBell -srcfolder "$contents" -format UDZO "$stage/RestBell.dmg" >&2
+tools="$PWD/.build/dmg-tools"
+requirements="$PWD/Support/dmg-requirements.txt"
+if ! cmp -s "$requirements" "$tools/requirements.txt"; then
+    python3 -m venv "$tools"
+    "$tools/bin/python" -m pip --disable-pip-version-check install \
+        --only-binary=:all: --require-hashes -r "$requirements" >&2
+    cp "$requirements" "$tools/requirements.txt"
+fi
+
+"$tools/bin/python" -m dmgbuild -s Support/dmg-settings.py \
+    -D "app=$app" -D "background=$PWD/Support/dmg-background.tiff" \
+    RestBell "$stage/RestBell.dmg" >&2
 hdiutil verify "$stage/RestBell.dmg" >&2
 mv "$stage/RestBell.dmg" "$dmg"
 printf '%s\n' "$dmg"

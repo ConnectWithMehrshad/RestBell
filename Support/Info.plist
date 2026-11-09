@@ -8,6 +8,8 @@
     <string>RestBell</string>
     <key>CFBundleIdentifier</key>
     <string>local.restbell</string>
+    <key>CFBundleIconFile</key>
+    <string>RestBell.icns</string>
     <key>CFBundleName</key>
     <string>RestBell</string>
     <key>CFBundlePackageType</key>

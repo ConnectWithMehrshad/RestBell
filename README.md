@@ -1,3 +1,5 @@
+<img src="docs/restbell-icon.png" width="96" alt="RestBell app icon">
+
 # RestBell
 
 RestBell is a small macOS menu bar timer for alternating work and eye breaks. It uses Swift, AppKit, and SwiftUI with no external dependencies.
@@ -47,4 +49,4 @@ app="$(./scripts/build-app)" &&
 
 Run `swift test --disable-xctest` to check the work/rest cycle and reset behavior. GitHub Actions runs these tests and verifies the app bundle on macOS.
 
-Run `./scripts/build-dmg` to build the universal disk image at `.build/RestBell.dmg`. Pushing a version tag that matches the app version triggers the GitHub release workflow.
+With Python 3.10 or later, run `./scripts/build-dmg` to build the universal disk image at `.build/RestBell.dmg`. The first build downloads the packaging tools into `.build`. Pushing a version tag that matches the app version triggers the GitHub release workflow.

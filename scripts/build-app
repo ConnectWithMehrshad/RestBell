@@ -6,9 +6,10 @@ swift build --configuration release "$@" >&2
 build_dir="$(swift build --configuration release "$@" --show-bin-path)"
 app="$build_dir/RestBell.app"
 
-mkdir -p "$app/Contents/MacOS"
+mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 install -m 755 "$build_dir/RestBell" "$app/Contents/MacOS/RestBell"
 install -m 644 Support/Info.plist "$app/Contents/Info.plist"
+install -m 644 Support/RestBell.icns "$app/Contents/Resources/RestBell.icns"
 codesign --force --sign - "$app" >&2
 
 printf '%s\n' "$app"
