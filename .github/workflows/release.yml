@@ -1,0 +1,30 @@
+name: Release DMG
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Check version and build DMG
+        run: |
+          version="$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' Support/Info.plist)"
+          test "v$version" = "$GITHUB_REF_NAME"
+          ./scripts/build-dmg
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" .build/RestBell.dmg \
+            --verify-tag --title "RestBell $GITHUB_REF_NAME" --generate-notes \
+            --notes "Universal disk image for Apple silicon and Intel Macs running macOS 14 or later. The app uses ad hoc signing and has no Apple notarization."

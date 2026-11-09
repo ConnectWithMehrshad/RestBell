@@ -11,6 +11,12 @@ RestBell is a small macOS menu bar timer for alternating work and eye breaks. It
   <img src="docs/screenshots/settings.png" alt="RestBell settings with work and rest durations, a bell sound preview, and an Open at Login checkbox" width="370">
 </picture>
 
+## Download
+
+Get `RestBell.dmg` from [GitHub Releases](https://github.com/ConnectWithMehrshad/RestBell/releases/latest). Open the disk image and drag RestBell to Applications. The disk image supports Apple silicon and Intel Macs running macOS 14 or later.
+
+The release uses ad hoc signing and has no Apple notarization. macOS may block the downloaded app.
+
 ## Build and open
 
 Use macOS 14 or later and the Apple command line tools with Swift 6. From the repository, run:
@@ -41,4 +47,4 @@ app="$(./scripts/build-app)" &&
 
 Run `swift test --disable-xctest` to check the work/rest cycle and reset behavior. GitHub Actions runs these tests and verifies the app bundle on macOS.
 
-The build script signs the bundle for local use. A downloadable release can be signed with Developer ID and notarized for distribution. [Apple's distribution guide](https://developer.apple.com/macos/distribution/)
+Run `./scripts/build-dmg` to build the universal disk image at `.build/RestBell.dmg`. Pushing a version tag that matches the app version triggers the GitHub release workflow.
